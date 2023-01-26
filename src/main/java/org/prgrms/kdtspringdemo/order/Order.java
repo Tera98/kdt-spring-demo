@@ -1,4 +1,6 @@
-package org.prgrms.kdtspringdemo;
+package org.prgrms.kdtspringdemo.order;
+
+import org.prgrms.kdtspringdemo.voucher.Voucher;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,5 +35,9 @@ public class Order {
 
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public UUID getOrderId() {
+        return orderId;
     }
 }
