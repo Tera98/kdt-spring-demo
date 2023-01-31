@@ -29,12 +29,9 @@ import java.util.stream.Stream;
 
 public class OrderTester {
     public static void main(String[] args) throws IOException {
-        var applicationContext = new AnnotationConfigApplicationContext();
-        applicationContext.register(AppConfiguration.class);
-        var environment = applicationContext.getEnvironment();
-        environment.setActiveProfiles("local");
-        applicationContext.refresh();
+        var applicationContext = new AnnotationConfigApplicationContext(AppConfiguration.class);
 
+//        var environment = applicationContext.getEnvironment();
 //        var version = environment.getProperty("kdt.version");
 //        var minimumOrderAmount = environment.getProperty("kdt.minimum-order-amount", Integer.class);
 //        var supportVendors = environment.getProperty("kdt.support-vendors", List.class);
@@ -45,32 +42,14 @@ public class OrderTester {
 //        System.out.println(MessageFormat.format("description -> {0}", description));
 
         var orderProperties = applicationContext.getBean(OrderProperties.class);
-//        System.out.println(MessageFormat.format("version -> {0}", orderProperties.getVersion()));
-//        System.out.println(MessageFormat.format("minimumOrderAmount -> {0}", orderProperties.getMinimumOrderAmount()));
-//        System.out.println(MessageFormat.format("supportVendors -> {0}", orderProperties.getSupportVendors()));
-//        System.out.println(MessageFormat.format("description -> {0}", orderProperties.getDescription()));
-
-        var resource = applicationContext.getResource("classpath:application.yaml");
-        var resource2 = applicationContext.getResource("file:test/sample.txt");
-        var resource3 = applicationContext.getResource("https://stackoverflow.com/");
-        System.out.println(MessageFormat.format("Resource -> {0}", resource3.getClass().getCanonicalName()));
-
-
-//        var strings = Files.readAllLines(resource.getFile().toPath());
-//        System.out.println(strings.stream().reduce("", (a, b) -> a + "\n" + b));
-
-        var readableByteChannel = Channels.newChannel(resource3.getURL().openStream());
-        var bufferedReader = new BufferedReader(Channels.newReader(readableByteChannel, StandardCharsets.UTF_8));
-        var contents = bufferedReader.lines().collect(Collectors.joining("\n"));
-        System.out.println(contents);
+        System.out.println(MessageFormat.format("version -> {0}", orderProperties.getVersion()));
+        System.out.println(MessageFormat.format("minimumOrderAmount -> {0}", orderProperties.getMinimumOrderAmount()));
+        System.out.println(MessageFormat.format("supportVendors -> {0}", orderProperties.getSupportVendors()));
+        System.out.println(MessageFormat.format("description -> {0}", orderProperties.getDescription()));
 
         var customerID = UUID.randomUUID();
-        var voucherRepository = applicationContext.getBean(VoucherRepository.class);
+        var voucherRepository = BeanFactoryAnnotationUtils.qualifiedBeanOfType(applicationContext.getBeanFactory(), VoucherRepository.class,"memory");
         var voucher = voucherRepository.insert(new FixedAmountVoucher(UUID.randomUUID(), 10L));
-
-//        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository instanceof JdbcVoucherRepository));
-//        System.out.println(MessageFormat.format("is Jdbc Repo -> {0}", voucherRepository.getClass().getCanonicalName()));
-
 
         var orderService = applicationContext.getBean(OrderService.class);
         var order = orderService.createOrder(customerID, new ArrayList<OrderItem>() {{
