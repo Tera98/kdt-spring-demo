@@ -18,6 +18,8 @@ public class OrderProperties implements InitializingBean {
 
     private List<String> supportVendors;
 
+    private String description;
+
     public String getVersion() {
         return version;
     }
@@ -49,8 +51,6 @@ public class OrderProperties implements InitializingBean {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    private String description;
 
     @Value("${JAVA_HOME}")
     private String javaHome;

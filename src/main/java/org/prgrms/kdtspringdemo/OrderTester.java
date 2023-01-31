@@ -13,13 +13,19 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OrderTester {
     public static void main(String[] args) throws IOException {
@@ -44,11 +50,19 @@ public class OrderTester {
 //        System.out.println(MessageFormat.format("supportVendors -> {0}", orderProperties.getSupportVendors()));
 //        System.out.println(MessageFormat.format("description -> {0}", orderProperties.getDescription()));
 
-        var resource = applicationContext.getResource("application.yaml");
-        System.out.println(MessageFormat.format("Resource -> {0}", resource.getClass().getCanonicalName()));
-        var file = resource.getFile();
-        var strings = Files.readAllLines(file.toPath());;
-        System.out.println(strings);
+        var resource = applicationContext.getResource("classpath:application.yaml");
+        var resource2 = applicationContext.getResource("file:test/sample.txt");
+        var resource3 = applicationContext.getResource("https://stackoverflow.com/");
+        System.out.println(MessageFormat.format("Resource -> {0}", resource3.getClass().getCanonicalName()));
+
+
+//        var strings = Files.readAllLines(resource.getFile().toPath());
+//        System.out.println(strings.stream().reduce("", (a, b) -> a + "\n" + b));
+
+        var readableByteChannel = Channels.newChannel(resource3.getURL().openStream());
+        var bufferedReader = new BufferedReader(Channels.newReader(readableByteChannel, StandardCharsets.UTF_8));
+        var contents = bufferedReader.lines().collect(Collectors.joining("\n"));
+        System.out.println(contents);
 
         var customerID = UUID.randomUUID();
         var voucherRepository = applicationContext.getBean(VoucherRepository.class);
