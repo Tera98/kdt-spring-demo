@@ -4,31 +4,24 @@ import org.prgrms.kdtspringdemo.order.OrderItem;
 import org.prgrms.kdtspringdemo.order.OrderProperties;
 import org.prgrms.kdtspringdemo.order.OrderService;
 import org.prgrms.kdtspringdemo.voucher.FixedAmountVoucher;
-import org.prgrms.kdtspringdemo.voucher.JdbcVoucherRepository;
-import org.prgrms.kdtspringdemo.voucher.Voucher;
 import org.prgrms.kdtspringdemo.voucher.VoucherRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.BeanFactoryAnnotationUtils;
+import org.springframework.boot.ansi.AnsiOutput;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class OrderTester {
-    public static void main(String[] args) throws IOException {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderTester.class);
+
+    public static void main(String[] args) {
+        AnsiOutput.setEnabled(AnsiOutput.Enabled.ALWAYS);
         var applicationContext = new AnnotationConfigApplicationContext(AppConfiguration.class);
 
 //        var environment = applicationContext.getEnvironment();
@@ -42,10 +35,11 @@ public class OrderTester {
 //        System.out.println(MessageFormat.format("description -> {0}", description));
 
         var orderProperties = applicationContext.getBean(OrderProperties.class);
-        System.out.println(MessageFormat.format("version -> {0}", orderProperties.getVersion()));
-        System.out.println(MessageFormat.format("minimumOrderAmount -> {0}", orderProperties.getMinimumOrderAmount()));
-        System.out.println(MessageFormat.format("supportVendors -> {0}", orderProperties.getSupportVendors()));
-        System.out.println(MessageFormat.format("description -> {0}", orderProperties.getDescription()));
+        logger.error("logger name => {}", logger.getName());
+        logger.warn("version -> {}", orderProperties.getVersion());
+        logger.warn("minimumOrderAmount -> {}", orderProperties.getMinimumOrderAmount());
+        logger.warn("supportVendors -> {}", orderProperties.getSupportVendors());
+        logger.warn("description -> {}", orderProperties.getDescription());
 
         var customerID = UUID.randomUUID();
         var voucherRepository = BeanFactoryAnnotationUtils.qualifiedBeanOfType(applicationContext.getBeanFactory(), VoucherRepository.class,"memory");
