@@ -15,6 +15,9 @@ import java.text.MessageFormat;
 import java.util.UUID;
 
 @SpringBootApplication
+@ComponentScan(
+		basePackages = {"org.prgrms.kdtspringdemo.voucher", "org.prgrms.kdtspringdemo.order"}
+)
 public class KdtSpringDemoApplication {
 
 	private static final Logger logger = LoggerFactory.getLogger(KdtSpringDemoApplication.class);

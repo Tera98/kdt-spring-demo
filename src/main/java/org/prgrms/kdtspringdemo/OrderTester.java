@@ -22,9 +22,13 @@ public class OrderTester {
 
     public static void main(String[] args) {
         AnsiOutput.setEnabled(AnsiOutput.Enabled.ALWAYS);
-        var applicationContext = new AnnotationConfigApplicationContext(AppConfiguration.class);
+        var applicationContext = new AnnotationConfigApplicationContext();
+        applicationContext.register(AppConfiguration.class);
+        var environment = applicationContext.getEnvironment();
+        environment.setActiveProfiles("dev");
+        applicationContext.refresh();
 
-//        var environment = applicationContext.getEnvironment();
+
 //        var version = environment.getProperty("kdt.version");
 //        var minimumOrderAmount = environment.getProperty("kdt.minimum-order-amount", Integer.class);
 //        var supportVendors = environment.getProperty("kdt.support-vendors", List.class);
@@ -42,7 +46,7 @@ public class OrderTester {
         logger.warn("description -> {}", orderProperties.getDescription());
 
         var customerID = UUID.randomUUID();
-        var voucherRepository = BeanFactoryAnnotationUtils.qualifiedBeanOfType(applicationContext.getBeanFactory(), VoucherRepository.class,"memory");
+        var voucherRepository = applicationContext.getBean(VoucherRepository.class);
         var voucher = voucherRepository.insert(new FixedAmountVoucher(UUID.randomUUID(), 10L));
 
         var orderService = applicationContext.getBean(OrderService.class);
